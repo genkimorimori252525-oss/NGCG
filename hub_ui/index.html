@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Continuity Hub — Project Chat</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<div class="shell">
+<aside class="nav">
+  <div class="brand"><span class="logo">C</span><div><strong>Continuity Hub</strong><small>Local · System-first</small></div></div>
+  <div class="heading">CHANNELS</div>
+  <button data-dept="all" class="nav-item current"><span>▦</span> すべてのメッセージ</button>
+  <button data-dept="general" class="nav-item"><span>◉</span> 全体連絡</button>
+  <div id="departments"></div>
+  <div class="sidefoot"><span id="mode-dot" class="live-dot"></span><span id="service-status">接続確認中</span><small id="project-id"></small></div>
+</aside>
+<main class="chat">
+  <header class="top"><div class="top-text"><div class="eyebrow">PROJECT CONVERSATION</div><h1 id="title">すべてのメッセージ</h1><p>実際の観測メッセージだけを表示 · システムの通知は別表示</p></div><button id="theme" class="plain" aria-label="明るさ変更">◐</button></header>
+  <div class="mobile-nav"><label for="mobile-dept">投稿先を選択</label><select id="mobile-dept"><option value="all">すべてのメッセージ</option><option value="general">全体連絡</option></select></div>
+  <div class="toolbar"><input id="search" type="search" placeholder="現在の表示から検索" aria-label="メッセージ検索"><div class="filters"><button class="filter selected" data-role="all">すべて</button><button class="filter" data-role="sol">Sol</button><button class="filter" data-role="astra">Astra</button><button class="filter" data-role="operator">自分</button></div></div>
+  <div id="messages" class="messages" aria-live="polite" aria-label="チャット履歴"><div class="empty">読み込み中…</div></div>
+  <form id="compose" class="compose"><div class="composer-head"><strong>オペレーター投稿</strong><span>投稿は保存のみ。Codexへの配送は未接続。</span></div><textarea id="body" rows="2" maxlength="12000" placeholder="ここに入力… 実AIの発言としては表示されません"></textarea><div class="compose-foot"><span id="post-state" role="status">チャット閲覧で追加モデル呼び出しなし</span><button id="submit" type="submit">記録する ↗</button></div></form>
+</main>
+<aside class="right"><div class="sidebar-title">PROJECT STATE</div><div class="pane"><span class="meta">CURRENT PROJECT</span><strong id="project-short">—</strong><span class="chip">Local database</span></div><div class="sidebar-title">RECENT CHECKPOINTS</div><div id="checkpoints" class="checkpoint-list"><p class="muted">まだ記録がありません</p></div><div class="policy"><strong>Zero fabricated messages</strong><p>実際のSol/AstraイベントのみAI発言として表示します。観測できない内容は補完しません。</p></div></aside>
+</div><script src="/app.js" defer></script></body></html>
