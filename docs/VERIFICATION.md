@@ -12,7 +12,7 @@ state namespace or charter approval rules.
 | `python -B -m unittest discover -s tests -v` | 56 tests passed on Windows / Python 3.10 |
 | `node --check hub_ui/app.js` | Passed |
 | Skill frontmatter validation | Passed |
-| Runtime, UI and tests compared with the source installation | All 24 files matched byte for byte |
+| Runtime, UI and tests compared with the source installation | 23 files match byte for byte; `atomic_io.py` only removes trailing whitespace, with identical Python AST |
 | Import review for personal paths, local state and credential patterns | No matching personal paths or credentials in published files |
 
 Existing tests cover bounded brief and JSON output, exact task selection,

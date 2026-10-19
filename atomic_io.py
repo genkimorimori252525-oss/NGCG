@@ -94,7 +94,7 @@ def atomic_write_text(
     try:
         with os.fdopen(temp_fd, "w", encoding=encoding, newline="\n") as f:
             f.write(content)
-        
+
         # On Windows, os.replace is atomic on same volume since Python 3.3
         os.replace(temp_path, path)
         return path
