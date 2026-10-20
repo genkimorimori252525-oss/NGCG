@@ -475,6 +475,12 @@ updated_at: "{now_str}"
 
 def cmd_worktrees(args):
     """Read-only overview of parent and linked worktree research histories."""
+    # Windows redirected stdout can otherwise use a legacy code page (e.g. cp1252)
+    # which cannot represent Japanese worktree paths or researcher names.
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except (AttributeError, OSError, ValueError):
+        pass
     from worktree_view import worktree_report
     try:
         overview = worktree_report(find_git_root())
