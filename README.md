@@ -47,6 +47,26 @@ python <NGCG_ROOT>/continuity.py audit
 
 実行command・終了コード・log SHAをreceiptに記録します。再検証でも過去のFAILを一覧から削除しません。UNKNOWNや任意形式のタスクIDも保持します。receiptはcommand実行の証拠であり、試験の十分性や製品全体の完成を証明するものではありません。全体auditは重要な節目やdrift確認時に実行し、小修正ごとに不要な監査・要約を重ねない運用にします。
 
+## 任意のGit worktree比較（親＋2つの研究室）
+
+一つの方法を並行開発するだけなら、従来どおり同じ作業フォルダで構いません。**2案を独立して実装・比較する実益があるとAIが判断した場合だけ**、Git標準機能で比較用のlinked worktreeを2本作れます。
+
+親は元のmain worktreeで、子はそれぞれ独立したブランチ・作業フォルダです。これはGit worktreeの本数としては「親1本＋子2本」の構成です。NGCGがworktreeやエージェントを勝手に作成することはありません。
+
+```sh
+# 元のプロジェクトフォルダで（作業の基準となる目標・制約は先に保存する）
+git worktree add -b experiment-a ../project-experiment-a
+git worktree add -b experiment-b ../project-experiment-b
+
+# 親または子のフォルダから、現在の関連研究室をまとめて確認
+python <NGCG_ROOT>/continuity.py worktrees
+python <NGCG_ROOT>/continuity.py worktrees --json
+```
+
+**各子のフォルダをカレントディレクトリとして**、普段どおり`restore --brief`、`recall`、`checkpoint`、`evidence_runner.py`を使います。文書（`docs/ai-continuity/`）は各ブランチの作業ツリー内に、SQLite履歴は各フォルダ固有の既存保存領域に残ります。親の`worktrees`は双方の作業状態・証拠件数・直近チェックポイントを読み取り専用で表示します。**子のPASSや承認を、親プロジェクト全体のPASSや承認へ自動昇格しません。**
+
+注意：子は作成時点のコミット済み文書を引き継ぎますが、その後の編集は自動同期されません。親で方針と採用条件を管理し、各子は独立に記録します。比較後の採否・Gitマージ・承認は明示的な判断が必要です。Git管理外のSQLite履歴もマージされません。2案の比較が不要ならworktreeを増やさないでください。
+
 ## 任意のローカルHub
 
 ```sh
