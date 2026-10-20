@@ -473,6 +473,35 @@ updated_at: "{now_str}"
     print(f"Checkpoint saved: id={cp_id}, task={task}, agent={agent}, handoff={name}")
 
 
+def cmd_worktrees(args):
+    """Read-only overview of parent and linked worktree research histories."""
+    # Windows redirected stdout can otherwise use a legacy code page (e.g. cp1252)
+    # which cannot represent Japanese worktree paths or researcher names.
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+    except (AttributeError, OSError, ValueError):
+        pass
+    from worktree_view import worktree_report
+    try:
+        overview = worktree_report(find_git_root())
+    except ValueError as exc:
+        raise SystemExit(str(exc))
+    if args.json:
+        print(json.dumps(overview, ensure_ascii=False, indent=2))
+        return
+    print("=== NGCG WORKTREE PARENT OVERVIEW ===")
+    for item in [overview["parent"], *overview["variants"]]:
+        print(f"[{item['role'].upper()}] {item['branch']}  {item['path']}")
+        print(f"  task={item['current_task'] or 'unrecorded'} status={item['current_status']} "
+              f"approval={item['charter_approval']}")
+        print(f"  evidence={item['evidence_counts']} checkpoints={len(item['latest_checkpoints'])}")
+        for warning in item["warnings"]:
+            print("  WARNING: " + warning)
+    print(f"Variants: {overview['variant_count']} (recommended: 2); "
+          f"layout={overview['layout']}")
+    print(overview["notice"])
+
+
 def cmd_restore(args):
     """Generate restoration context packet."""
     project_root = find_git_root()
@@ -635,6 +664,10 @@ def main():
     p_cp.add_argument("--evidence", default="", help="Evidence reference")
     p_cp.add_argument("--status", default="IN_PROGRESS", help="Task status")
 
+    # Optional read-only parent view; no automatic worktree creation/merging.
+    p_wt = subparsers.add_parser("worktrees", help="Inspect parent and linked worktree histories")
+    p_wt.add_argument("--json", action="store_true", help="Machine-readable parent/variant overview")
+
     # restore
     p_res = subparsers.add_parser("restore", help="Generate restoration context packet")
     p_res.add_argument("--brief", action="store_true", default=True, help="Brief restoration packet")
@@ -673,6 +706,7 @@ def main():
         "init": cmd_init,
         "status": cmd_status,
         "checkpoint": cmd_checkpoint,
+        "worktrees": cmd_worktrees,
         "restore": cmd_restore,
         "recall": cmd_recall,
         "audit": cmd_audit,

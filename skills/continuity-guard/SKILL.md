@@ -16,6 +16,7 @@ description: Restore project goals, constraints and unresolved evidence on start
 - projectの重要milestone完了claimやdrift確認で `audit`。小修正・通常の質問で新規initや全体auditを重ねず、必要な検証をまとめて実行する。self-hash/USER表示だけで外部承認を捏造しない。旧承認・旧receipt不足はHOLDとし原記録を保持する。restoreで読めても承認済みではない。
 - `approve-charter` は人間が実TTYで原Charterを読みchallengeを入力する操作。AIから自動実行・承認receipt生成をしない。承認不足を空init/旧記録削除で回避しない。
 - Hooksとproject別Team Chatは既定OFF。chat ONからagent自動起動や実Codex配送を推定しない。SQLite状態・承認recordはproject別で旧版へ無断流用・削除しない。
+- 2つの独立実装を比較する意義が明確なときだけGit linked worktreeを検討する。通常は同一フォルダのまま。元のmain worktreeを親、linked worktreeを比較用研究室として各々のcwdで記録する。`worktrees [--json]`は親と子の進捗・証拠を読み取り専用で一覧化するだけで、子のPASSや承認を親の完了とみなさない。新しいworktree・AIの自動生成、branchの自動merge、独立SQLite履歴の自動同期はしない。
 - 最新人間指示を最優先。context-mode/superpowers/Astra相談は設計上重要と主担当が判断した場合のみ。通常作業の自動適用・反復相談をしない。CCGのrestore/checkpointと実検証は別の責任として維持する。
 
 使い方はNGCGのREADME.md、復元契約はdocs/DESIGN.mdを参照。導入と既存projectのCharter承認完了は別。
