@@ -7,9 +7,9 @@ operations, or promotion of a child's PASS/approval into parent authority.
 from __future__ import annotations
 
 import sqlite3
+from contextlib import closing
 import subprocess
 from pathlib import Path
-from urllib.parse import quote
 
 from approval_guard import read_approval
 from loader import load_charter, load_current, load_evidence
@@ -50,9 +50,9 @@ def _latest_checkpoints(root: Path) -> tuple[list[dict], str | None]:
     database = state_path(root)
     if not database.is_file():
         return [], None
-    uri = "file:" + quote(str(database.resolve()).replace("\\", "/"), safe="/:") + "?mode=ro"
+    uri = database.resolve().as_uri() + "?mode=ro"
     try:
-        with sqlite3.connect(uri, uri=True, timeout=2) as db:
+        with closing(sqlite3.connect(uri, uri=True, timeout=2)) as db:
             rows = db.execute(
                 "SELECT agent, task, status, created_at FROM checkpoints "
                 "WHERE project_id=? ORDER BY rowid DESC LIMIT 3",
