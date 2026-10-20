@@ -2,7 +2,7 @@ name: NGCG regression tests
 
 on:
   push:
-    branches: [main, feat/worktree-parent-view-20261020]
+    branches: [main]
   pull_request:
     branches: [main]
 
