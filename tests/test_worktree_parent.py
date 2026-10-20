@@ -100,15 +100,27 @@ class WorktreeParentTests(unittest.TestCase):
 
     def test_cli_json_has_no_hidden_write_or_extra_worktree(self):
         script = Path(__file__).resolve().parent.parent / "continuity.py"
+        # Force a legacy code page even on Linux, reproducing Windows redirection.
+        # Worktree CLI must emit Unicode text/JSON without a charmap crash.
+        legacy_env = {**os.environ, "PYTHONIOENCODING": "cp1252"}
         result = subprocess.run(
             [sys.executable, "-B", str(script), "worktrees", "--json"],
             cwd=self.main, capture_output=True, text=True,
-            encoding="utf-8", timeout=20,
+            encoding="utf-8", timeout=20, env=legacy_env,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         payload = json.loads(result.stdout)
         self.assertEqual(payload["variant_count"], 2)
         self.assertEqual(len(payload["variants"]), 2)
+        self.assertIn("研究", result.stdout)
+        human = subprocess.run(
+            [sys.executable, "-B", str(script), "worktrees"],
+            cwd=self.main, capture_output=True, text=True,
+            encoding="utf-8", timeout=20, env=legacy_env,
+        )
+        self.assertEqual(human.returncode, 0, human.stderr)
+        self.assertIn(str(self.a.resolve()), human.stdout)
+        self.assertIn(str(self.b.resolve()), human.stdout)
         self.assertFalse(state_path(self.main).exists())
 
 
