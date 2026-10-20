@@ -48,3 +48,30 @@ Design references: [claude-mem progressive disclosure](https://github.com/thedot
 and [OpenCode compaction](https://github.com/anomalyco/opencode/blob/dev/packages/core/src/session/compaction.ts).
 These informed the design; their services, dependencies and source code were not
 imported. No new package, model or cloud dependency is required.
+
+## Optional parent view for two Git worktree variants
+
+The main Git worktree is the **parent/coordinator**. For an experiment that truly
+benefits from comparing two independent implementations, an agent may choose two
+*linked* worktrees. Ordinary single-folder work remains the default; this
+feature never creates worktrees, launches agents, or automatically merges.
+
+- `continuity.py worktrees [--json]` runs `git worktree list --porcelain -z`
+  to identify the main worktree and all linked worktrees, and reports the two
+  intended variants (any extra linked worktrees are visible, never hidden).
+- Each worktree continues to use its existing path-keyed SQLite state and its
+  own checkout of `docs/ai-continuity/`. No DB schema changes or state
+  migration are necessary. The overview opens existing SQLite files read-only;
+  missing state is not silently initialized.
+- The parent's own Charter/decisions provide coordination. Branch-specific
+  notes, evidence, attempts, failures and checkpoints remain separate until an
+  explicit human-reviewed synthesis. An approved child Charter does not
+  authorize parent-wide changes. Passing evidence from a variant is not proof
+  that the entire project is complete.
+- Files committed before `git worktree add` form the initial shared baseline.
+  Branch edits and uncommitted files are not synchronized between variants.
+  Git history and refs are shared, working files and `HEAD` are distinct.
+- Worktree metadata derives from Git rather than names invented by the model.
+  AI-agent names identify checkpoint authors, **not** project ownership.
+- If a branch is merged, keep its source evidence and attribution; do not
+  auto-delete an experiment's failed attempts or private local state.
